@@ -1,0 +1,64 @@
+from tkinter import * 
+import customtkinter 
+from PIL import Image
+import tkinter as tk
+import tkinter.font as TKFont
+
+
+from urllib.request import urlopen
+import requests
+from io import BytesIO
+
+root = customtkinter.CTk()
+customtkinter.set_appearance_mode('dark')
+root.title("update !")
+root.iconbitmap('M://update_ico.ico')
+root.geometry('600x600')
+
+file = "M://loading.gif"
+info = Image.open('M://loading.gif')
+
+frames = info.n_frames
+
+gif_img_final = [tk.PhotoImage(file=file , format=f'gif -index {i}') for i in range(frames)]
+
+anim = None
+count = 0
+def animation(count):
+    global anim
+    update_label = customtkinter.CTkLabel(root , image="" , text="Updating in progress\nPlease wait ...." , compound=TOP , text_font=TKFont.Font(family='Helvitica' , size=20 , weight='bold') )
+    update_label.place(rely=.01 , relx=.10)
+    gif_2 = gif_img_final[count]
+    update_label.config(image=gif_2)
+
+
+    count += 1
+    if count == frames : 
+        count = 0
+    
+    root.after(100 , lambda:animation(count))
+
+
+#upadte_img_url = ("https://raw.githubusercontent.com/weedsman530/app/main/loading.gif")
+#u =  urlopen(upadte_img_url)
+#update_img_raw = u.read()
+#u.close()
+
+
+#update_image_final = ImageTk.PhotoImage(data=update_img_raw)
+
+#update_response = requests.get(url=upadte_img_url)
+#pdate_image_final = Image.open(BytesIO(update_response.content))
+
+print(frames)
+
+
+
+#btn = customtkinter.CTkButton(root , text="start" , command=lambda:animation(count=True))
+#btn.pack()
+
+
+
+root.after(50 , lambda:animation(count))
+
+root.mainloop()
