@@ -1,0 +1,130 @@
+from tkinter import * 
+import tkinter as tk
+
+import customtkinter
+from PIL import Image , ImageTk
+import openpyxl
+import tkinter.font as TKFont
+
+
+
+root = customtkinter.CTk()
+customtkinter.set_appearance_mode('dark')
+customtkinter.set_default_color_theme('blue')
+
+root.title('Easy Dose')
+root.iconbitmap('M://pharm logo.ico')
+root.attributes('-topmost',1)
+root.resizable(False , False)
+
+# get screen dimensions
+screen_width = root.winfo_screenwidth()
+screen_height = root.winfo_screenheight()
+
+# set window dimensions
+width = int(screen_width /5)
+height = int(screen_height /1.1)
+
+# set window position
+x = int(screen_width / 200)
+y = int(screen_height / 90)
+
+root.geometry(f"{width}x{height}+{x}+{y}")
+
+###########################################################
+def show_search_entry():
+    drug_search.place(rely=.06 , relx=.25)
+    search_button.config(command=hide_search_entry)
+
+def hide_search_entry():
+    drug_search.place_forget()
+    search_button.config(command=show_search_entry)
+
+def show_category_frame():
+    categor_frame.place(rely=.06,relx=0.001)
+    menu_button.config(command=hide_category_frmame)
+
+def hide_category_frmame():
+    categor_frame.place_forget()
+    menu_button.config(command=show_category_frame)
+
+
+
+#############################################################################
+workbook  = openpyxl.load_workbook('M:\\drugs.xlsx')
+worksheet = workbook.active
+
+############################### Listbox & Search Entry & Age entries  ##########################
+my_scroll = customtkinter.CTkScrollbar(root ,width=25, height=500  , scrollbar_color='#1c548c' , corner_radius=20 , bg_color=None , fg_color=None)
+my_scroll.place(rely=.12 , relx=.90)
+
+drug_list_frame = customtkinter.CTkFrame(root , width=int(screen_width/6),height=int(screen_height/2) , corner_radius=10,
+                                         fg_color='#313437')
+drug_list_frame.place(rely=.10 , relx=.05)
+
+drugs_list = Listbox(drug_list_frame , width=28 , height=23 , background='#313437' , border=0 , borderwidth=0 , 
+                     highlightthickness=0 , fg='white' , font=TKFont.Font(family='Cabin' , size=11  , weight='bold'),
+                     yscrollcommand=my_scroll.set)
+drugs_list.place(rely=.01 , relx=.02)
+
+my_scroll.config(command=drugs_list.yview)
+
+
+drug_search = customtkinter.CTkEntry(root , text_font=TKFont.Font(family='Signika Negative' , size=12 ) , width=200 , border_color='white',
+                                     border_width=2 , corner_radius=10 , height=35,
+                                     placeholder_text="Search drugs..." 
+                                     )
+
+age_frame = customtkinter.CTkFrame(root , width=int(screen_width/5.485) , height=int(screen_height/5),corner_radius=10)
+age_frame.place(rely=.70 , relx=.04)
+
+
+weigh_entry = customtkinter.CTkEntry(age_frame , width=150 , height=40 , corner_radius=10 , justify=CENTER,
+                                        text_font=TKFont.Font(family='Cabin' , size=15 , weight='bold' ),
+                                        placeholder_text='Weight')
+#weigh_entry.place(rely=.05 , relx=.30)
+
+month_entry = customtkinter.CTkEntry(age_frame , width=150 , height=40 , corner_radius=10 , justify=CENTER,
+                                     text_font=TKFont.Font(family='Cabin' , size=15 ,weight='bold' ) ,
+                                     placeholder_text='1 : 12 MONTHS')
+#month_entry.place(rely=.30 , relx=.30)
+age_year_entry = customtkinter.CTkEntry(age_frame , width=150 , height=40 , corner_radius=10 , justify=CENTER,
+                                        text_font=TKFont.Font(family='Cabin' , size=15 , weight='bold' ),
+                                        placeholder_text='1 : 12 YEARS')
+#age_year_entry.place(rely=.60 , relx=.30)
+
+
+######################################## Images ##############
+menu_img_final = ImageTk.PhotoImage(Image.open('M://menu33.png').resize((40,40)))
+search_img_final = ImageTk.PhotoImage(Image.open('M:/search33.png').resize((40,40)))
+
+ageinmonth_img_final = ImageTk.PhotoImage(Image.open('M:/age_month.png').resize((48,50)))
+weighentry_img_final =  ImageTk.PhotoImage(Image.open('M:/entry weight2.png').resize((60,60)))
+
+############################## Frames and widgets in ###################
+top_frame = customtkinter.CTkFrame(root , width=width , height=50 , fg_color='#283D4F')
+top_frame.place(rely=.001,relx=0.001)
+
+categor_frame = customtkinter.CTkFrame(root , width=width , height=int(screen_height /1.18) , fg_color='white' ,corner_radius=20)
+
+
+menu_button = customtkinter.CTkButton(top_frame , image=menu_img_final , text="" , fg_color=None , width=30,height=30 , 
+                                      command=show_category_frame)
+menu_button.place(rely=.03 , relx=.03)
+
+search_button = customtkinter.CTkButton(top_frame , image=search_img_final , text="" , fg_color=None , width=30,height=30,
+                                        corner_radius=5 , command=show_search_entry)
+search_button.place(rely=.03 , relx=.20)
+
+age_in_month_btn = customtkinter.CTkButton(age_frame , text="" , image=ageinmonth_img_final , width=60 , height=60 ,
+                                           fg_color=None)
+#age_in_month_btn.place(rely=.20 , relx=.10)
+
+weight_btn = customtkinter.CTkButton(age_frame , text='' , image=weighentry_img_final , width=60 , height=60 , 
+                                     fg_color=None)
+weight_btn.place(rely=.05 , relx=.05)
+
+#for cell in worksheet['A']:
+    #drugs_list.insert(tk.END , cell.value)
+
+root.mainloop()
