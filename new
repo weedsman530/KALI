@@ -98,8 +98,10 @@ age_year_entry = customtkinter.CTkEntry(age_frame , width=150 , height=40 , corn
 menu_img_final = ImageTk.PhotoImage(Image.open('M://menu33.png').resize((40,40)))
 search_img_final = ImageTk.PhotoImage(Image.open('M:/search33.png').resize((40,40)))
 
-ageinmonth_img_final = ImageTk.PhotoImage(Image.open('M:/age_month.png').resize((48,50)))
+ageinmonth_img_final = ImageTk.PhotoImage(Image.open('M:/age_month33.png').resize((60,60)))
 weighentry_img_final =  ImageTk.PhotoImage(Image.open('M:/entry weight2.png').resize((60,60)))
+ageinyear_img_final =  ImageTk.PhotoImage(Image.open('M:/boy33.png').resize((60,60)))
+
 
 ############################## Frames and widgets in ###################
 top_frame = customtkinter.CTkFrame(root , width=width , height=50 , fg_color='#283D4F')
@@ -118,12 +120,15 @@ search_button.place(rely=.03 , relx=.20)
 
 age_in_month_btn = customtkinter.CTkButton(age_frame , text="" , image=ageinmonth_img_final , width=60 , height=60 ,
                                            fg_color=None)
-#age_in_month_btn.place(rely=.20 , relx=.10)
+age_in_month_btn.place(rely=.40 , relx=.05)
 
 weight_btn = customtkinter.CTkButton(age_frame , text='' , image=weighentry_img_final , width=60 , height=60 , 
                                      fg_color=None)
 weight_btn.place(rely=.05 , relx=.05)
 
+age_in_year_btn = customtkinter.CTkButton(age_frame , text="" , image=ageinyear_img_final , width=60 , height=60 ,
+                                           fg_color=None)
+age_in_year_btn.place(rely=.70 , relx=.05)
 #for cell in worksheet['A']:
     #drugs_list.insert(tk.END , cell.value)
 
