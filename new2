@@ -1,0 +1,669 @@
+from tkinter import * 
+import tkinter as tk
+
+import customtkinter
+from PIL import Image , ImageTk
+import openpyxl
+import tkinter.font as TKFont
+import fnmatch
+
+
+root = customtkinter.CTk()
+customtkinter.set_appearance_mode('dark')
+customtkinter.set_default_color_theme('blue')
+
+root.title('Easy Dose')
+#root.iconbitmap('M:\\pharm logo.ico')
+root.attributes('-topmost',1)
+root.resizable(False , False)
+
+# get screen dimensions
+screen_width = root.winfo_screenwidth()
+screen_height = root.winfo_screenheight()
+
+# set window dimensions
+width = int(screen_width /5)
+height = int(screen_height /1.1)
+
+# set window position
+x = int(screen_width / 200)
+y = int(screen_height / 90)
+
+root.geometry(f"{width}x{height}+{x}+{y}")
+
+###########################################################
+def show_search_entry():
+    drug_list_frame.place(rely=.10 , relx=.05)
+    my_scroll.place(rely=.11 , relx=.90)
+    search_entry.place(rely=.06 , relx=.25)
+    search_button.config(command=hide_search_entry)
+
+def hide_search_entry():
+    my_scroll.place_forget()
+    search_entry.place_forget()
+    drug_list_frame.place_forget()
+    search_button.config(command=show_search_entry)
+
+def show_category_frame():
+    categor_frame.place(rely=.06,relx=0.001)
+    menu_button.config(command=hide_category_frmame)
+
+def hide_category_frmame():
+    categor_frame.place_forget()
+    menu_button.config(command=show_category_frame)
+
+def update (data):
+    medication_list.delete(0 , END)
+    for item in data:        
+       medication_list.insert(END, item)
+
+def check(event):
+    
+
+    typed = search_entry.get()
+    if typed == '':
+        data = all_drugs
+    else:
+        data = []
+        for item in all_drugs:
+            if fnmatch.fnmatch(item, typed) or typed.lower() in item.lower():
+                data.append(item)
+    update(data)
+
+
+#############################################################################
+#workbook  = openpyxl.load_workbook('M:\\drugs.xlsx')
+#worksheet = workbook.active
+
+############################### Listbox & Search Entry & Age entries  ##########################
+my_scroll = customtkinter.CTkScrollbar(root ,width=25, height=200  , scrollbar_color='#1c548c' , corner_radius=20 , bg_color=None , fg_color=None)
+
+
+drug_list_frame = customtkinter.CTkFrame(root , width=int(screen_width/6),height=int(screen_height/5) , corner_radius=10,
+                                         fg_color='#313437')
+
+medication_list = Listbox(drug_list_frame , width=28 , height=10 , background='#313437' , border=0 , borderwidth=0 , 
+                     highlightthickness=0 , fg='white' , font=TKFont.Font(family='Cabin' , size=11  , weight='bold'),
+                     yscrollcommand=my_scroll.set)
+medication_list.place(rely=.01 , relx=.02)
+
+my_scroll.config(command=medication_list.yview)
+
+
+search_entry = customtkinter.CTkEntry(root , text_font=TKFont.Font(family='Signika Negative' , size=12 ) , width=200 , border_color='white',
+                                     border_width=2 , corner_radius=10 , height=35,
+                                     placeholder_text="Search drugs..." 
+                                     )
+search_entry.bind('<KeyRelease>' , check)
+
+age_frame = customtkinter.CTkFrame(root , width=int(screen_width/5.485) , height=int(screen_height/5),corner_radius=10)
+#age_frame.place(rely=.70 , relx=.04)
+
+
+weigh_entry = customtkinter.CTkEntry(age_frame , width=150 , height=40 , corner_radius=10 , justify=CENTER,
+                                        text_font=TKFont.Font(family='Cabin' , size=15 , weight='bold' ),
+                                        placeholder_text='Weight')
+#weigh_entry.place(rely=.05 , relx=.30)
+
+month_entry = customtkinter.CTkEntry(age_frame , width=150 , height=40 , corner_radius=10 , justify=CENTER,
+                                     text_font=TKFont.Font(family='Cabin' , size=15 ,weight='bold' ) ,
+                                     placeholder_text='1 : 12 MONTHS')
+#month_entry.place(rely=.30 , relx=.30)
+age_year_entry = customtkinter.CTkEntry(age_frame , width=150 , height=40 , corner_radius=10 , justify=CENTER,
+                                        text_font=TKFont.Font(family='Cabin' , size=15 , weight='bold' ),
+                                        placeholder_text='1 : 12 YEARS')
+#age_year_entry.place(rely=.60 , relx=.30)
+
+
+######################################## Images ##############
+menu_img_final = ImageTk.PhotoImage(Image.open('M:\\menu33.png').resize((40,40)))
+search_img_final = ImageTk.PhotoImage(Image.open('M:\\search33.png').resize((40,40)))
+
+ageinmonth_img_final = ImageTk.PhotoImage(Image.open('M:\\age_month33.png').resize((60,60)))
+weighentry_img_final =  ImageTk.PhotoImage(Image.open('M:\\entry weight2.png').resize((60,60)))
+ageinyear_img_final =  ImageTk.PhotoImage(Image.open('M:\\boy33.png').resize((60,60)))
+
+
+############################## Frames and widgets in ###################
+top_frame = customtkinter.CTkFrame(root , width=width , height=50 , fg_color='#283D4F')
+top_frame.place(rely=.001,relx=0.001)
+
+categor_frame = customtkinter.CTkFrame(root , width=width , height=int(screen_height /1.18) , fg_color='black' ,corner_radius=20)
+
+
+menu_button = customtkinter.CTkButton(top_frame , image=menu_img_final , text="" , fg_color=None , width=30,height=30 , 
+                                      command=show_category_frame)
+menu_button.place(rely=.03 , relx=.03)
+
+search_button = customtkinter.CTkButton(top_frame , image=search_img_final , text="" , fg_color=None , width=30,height=30,
+                                        corner_radius=5 , command=show_search_entry)
+search_button.place(rely=.03 , relx=.20)
+
+age_in_month_btn = customtkinter.CTkButton(age_frame , text="" , image=ageinmonth_img_final , width=60 , height=60 ,
+                                           fg_color=None)
+age_in_month_btn.place(rely=.40 , relx=.05)
+
+weight_btn = customtkinter.CTkButton(age_frame , text='' , image=weighentry_img_final , width=60 , height=60 , 
+                                     fg_color=None)
+weight_btn.place(rely=.05 , relx=.05)
+
+age_in_year_btn = customtkinter.CTkButton(age_frame , text="" , image=ageinyear_img_final , width=60 , height=60 ,
+                                           fg_color=None)
+age_in_year_btn.place(rely=.70 , relx=.05)
+#for cell in worksheet['A']:
+    #medication_list.insert(tk.END , cell.value)
+
+antibiotics_drugs1=['Augmentin Susp' , 'Averobios Susp' , 'DeltaClav Susp' , 'Curam Susp' , 'Clavimox Susp' ,'E-Mox Clav Susp' , 'Hibiotic Susp', 'Megamox Susp',
+"Amoclawin  Susp. ","Clavosigma Susp. ","New-Clav   Susp. ","Augmacillin  Susp. ","Magnabiotic  Susp. ","Augram  Susp. " ] 
+antibiotics_drugs1_conc = [('156', '228' , '312'  , '457'  ,  '600'),
+('642.9',) , 
+('228.5' ,' 312.5' , '457')  , 
+('156.25'  , '228.5'  , '312.5'  , '457' , '642.9' ),
+('228.5'  ,' 312.5'  , '457' , '600')  , 
+('156'  , '228.5'  , '457'  , '642.9') , 
+('228'  , '312'  , '457'  , '600') , 
+('228'  , '457'),
+("228.5","457"),
+("312.5",),
+("642.9","457"),
+("228.5","457"),
+("460","312.5"),
+("228.5","457","642.9")
+]
+
+antibiotics_drugs2 = [ 'Xithrone 200 mg / 5 ml Susp' ,'Azi Once 200 mg / 5 ml Susp ' , 'Zithrodose 100 mg / 5 ml Susp' , 'Azrolid 200 mg / 5 ml Susp' , 'Epizithro 200 mg / 5 ml Susp' , 'Zithromax 200 mg / 5 ml Susp',
+"Zisrocin100 Mg/5Ml Susp","Zithrokan (200Mg/5Ml)  Susp"
+,"Zithrokan 100 Mg/ 5 Ml  Susp","Azalide 200 Mg / 5 Ml Susp  Susp","Azomycin 200Mg/5Ml Susp","Rame-Zithro 200Mg/5Ml Susp. 15 Ml"
+,"Unizithrocure 200 Mg / 5 Ml Suspension 15 Ml","Unizithrin 100 Mg/5 Ml Susp","Xerexomair 100 Mg/5 Ml Susp","Badozithro 200 Mg / 5 Ml  Susp"]
+antibiotics_drugs2_concentrations=['200', '200' ,'100' ,'200' ,'200' ,'200',"100","200","100","200","200","200","200","100","100","200"]
+
+antibiotics_drugs3=["Septrin Pediatric 200 / 40 mg Susp" , "Septazole 200 / 40 mg Susp","Sutrim 200 / 40 mg Susp."]
+antibiotics_drugs3_concentration=[" 200 / 40  ", " 200 / 40 ", " 200 / 40 "]
+
+antibiotics_drugs4=["Suprax 100 Mg / 5 Ml Susp","Hebixime 100 Mg / 5 Ml  Susp","Flavicef 100 Mg / 5 Ml  Susp","Cefixime 100 Mg / 5 Ml  Susp","Ximacef 100 Mg / 5 Ml  Susp","Biocefixim 100 Mg / 5 Ml  Susp","Biocefixim 200 Mg / 5 Ml  Susp"]
+antibiotics_drugs4_concentration=[" 100","100","100","100","100","100","200"]
+
+clarithromycin_antibiotic_medications=["Infectocure 125Mg/5Ml Susp.","Infectocure 250Mg/5Ml Susp.","Klacid 125 Mg/5 Ml Susp. ","Klacid 250 Mg/5Ml Susp." ]
+clarithromycin_antibiotic_medications_conc=["125","250","125","250"]
+
+
+cefdinir_antibiotic_medications=["Cedenir 125Mg/5Ml Dry Susp.","Cefathird 125Mg/5Ml Pd. For Oral Susp.","Dinar 125Mg/5Ml Susp. ","Egynir 125Mg/5Ml Pd. For Oral Susp. ",
+"Maxdinir 125Mg/5Ml Susp","Merbactadin 125Mg/5Ml Dry Susp. ","Merbactadin 250Mg/5Ml Dry Susp. ","Omnicef 125Mg/5Ml Susp. ",
+"Rame-Dinir 125Mg/5Ml Susp. ","Rame-Dinir 250Mg/5Ml Susp. ","Torbener 125Mg/5Ml Pd. For Oral Susp. ","Torbener 250Mg/5Ml Pd. For Oral Susp. "]
+cefdinir_antibiotic_medications_conc=["125","125","125","125","125","125","250","125","125","250","125","250"]
+
+cefalexin_antibiotic_medications=["Ceporex 125Mg/5Ml Susp .", "Keflex 250Mg  Susp ."]
+cefalexin_antibiotic_medications_conc=["125","250"]
+
+
+flumox_antibiotics_medications=[ "Flumox  250  Mg  Susp.","Unictam 250 Mg / 5 Ml  Susp.","Unasyn 250 Mg/ 5 Ml Susp 60 Ml"]
+flumox_antibiotics_medications_conc=["250","250","250"]
+
+
+
+amoxicllin_medications_drugs=["Amoxil Forte 250 Mg Susp100 Ml","Biomox 250Mg/5Ml Susp 80 Ml","E Mox 125 Mg /5 Ml Susp 60 M","E-Mox 250Mg/5Mlsusp60Ml","Ibiamox 400 Mg/5Ml Susp80Ml"]
+amoxicllin_medications_drugs_conc=["250","250","125","250","400"]
+
+duricef_antibiotics_drugs=["Longicef 250 Ml Suspension","Curisafe 125Mg/60Ml Susp","Curisafe 250Mg/60Ml Suspp","Ibidroxil 250 Mg Susp60 Ml","Ibidroxil 500Mg/5Ml Susp 60Ml"
+,"Duricef 250 Mg /5 Ml Susp 60 Ml","Duricef 500 Mg Susp 60 Ml","Duricef125Mg/5Ml Susp 60Ml","Curisafe 500Mg Susp60Ml"]
+
+duricef_antibiotics_drugs_conc=["250","125","250","250","500","250","500","125","500"]
+
+
+cefaclor_antibiotic_drugs=["BACTICLOR  250 MG  SUSP  60 ML ","BACTICLOR 125 MG SUSP  60 ML","CECLOR  250MG SUSP 75ML","MISACLOR 125 MG ORAL SUSP","MISACLOR  250  MG ORAL SUSP","CECLOR  125MG SUSP  75ML","LANACLOR 250MG ORAL POWDER SUSP. 60 ML"]
+cefaclor_antibiotic_drugs_conc=["250","125","250","125","250","125","250"]
+
+velosef_antibiotics_drugs=["Velosef 250 Mg / 5 Ml Susp 100 Ml"]
+velosef_antibiotics_drugs_conc=['250']
+
+metronidazole_medications_drugs=["Flagellat  Forte 200 mg / 5 Ml Syrup.","Amrizole 125Mg / 5 Ml Susp.","Flagyl 125 Mg/5 Ml  Susp ."]
+metronidazole_medications_drugs_conc=["200","125","125"]
+
+ampicillin_antibiotics_medications=["Epicocillin 250 Mg Susp"]
+ampicillin_antibiotics_medications_conc=["250"]
+
+
+fever_medications = ["Cetal 250 mg / 5 ml  Susp" , "Temporal 250 mg / 5 ml Susp " , "Paramol 120 MG / 5 ML Susp"  , "Paragesic Baby 120 MG / 1 ML Syrup","Abimol 150mg/5ml syrup 125ml","Fevano 200mg/5ml syrup 125ml",
+"Tempra 160 mg/5ml syp. 90 ml","Cetamol 120mg/5ml pediatric syrup 120 ml","Pyral 2.4g/100ml syrup 125ml","Paracetamol Susp 120mg/5ml 120 Ml "]
+fever_medications_conc = ['250' , '250' , '125' ,'120',"150","200","160","120","120","120"] 
+
+paracetamol_drops_medications2=["Cetal 100mg/ Ml Oral Drops","Paragesic 100mg/ml oral drops 15ml","Pyral 100mg/ml oral drops 15 ml","Unicetamol 100mg/ml oral drops 15 ml","Febrimol oral drops 20 ml"]
+paracetamol_drops_medications2_conc=["100","100","100","100","100"]
+
+paracetamol_supp_medications2=["Cetal 120 Mg Supp","Paramol 125mg 5 paediatric supp.","Paralex 125 mg 5 rectal pediatric supp.","Grippo 200mg supp.","Pyral 250mg 5 children supp.","Abimol 300mg 5 rectal supp."]
+paracetamol_supp_conc=["120","125","125","200","250","300"]
+
+brufen_medications =['Brufen 100 mg / 5ml Syrup ' , 'Contafever N 200 mg / 5ml Syrup',"Ibufen 2% Susp. 120Ml",  "Ibucalmin 100Mg/5Ml Syrup 120 Ml",  "Alphafen 100Mg/5Ml Susp. 60 Ml",  "Profinal Paediatric 20Mg/Ml Susp. 110Ml",  "Marcofen 100Mg/5Ml Susp. 120Ml",  "Nova-Profen 100Mg/5Ml Oral Susp. 100Ml",  "Megafen-N 100Mg/5Ml Susp. 120 Ml",  "Ibuflam N 120Ml Susp.",  "Brufemol-N Susp. 120 Ml",  "Juspoled 100Mg/5Ml Syrup 120 Ml",  "Ibuprofen 100Mg/5Ml Susp. 120 Ml",  "Mafo 100Mg/5Ml Syrup 100 Ml"]
+brufen_medications_conc=["100","200","100", "100", "100", "100", "100", "100", "100", "100", "100", "100", "100", "100"]
+
+
+diclofenac_medications=['Catafly 2 mg / ml Syrup ']
+diclofenac_medications_conc=["2"]
+
+diclofenac_supp_medications=["Adwiflam 12.5Mg Infants 5 Supp.",  "Dolphin 12.5Mg 10 Supp.",  "Dolphin 25 Mg 10 Supp.",  "Suppofen 25Mg Rectal Supp.",  "Voltaren 12.5Mg 5 Supp. ",  "Voltaren 25Mg 5 Supp.",  "Declophen 25Mg 5 Infantile Supp.",  "Declophen 12.5Mg 5 Infantile Supp.",  "Baby Relief 25 Mg 5 Supp.",  "Baby Relief 12.5 Mg 5 Supp.",  "Epifenac 25Mg 5 Supp.",  "Epifenac 12.5Mg 5 Supp."]
+diclofenac_supp_medications_conc=["12.5", "12.5", "25", "25", "12.5", "25", "25", "12.5", "25", "12.5", "25", "12.5"]
+
+sore_medications=['Maxilase 200U.CEIP /Ml Syrup' ,"Megalase 200U.CEIP /Ml Syrup" , "Medmylyzen 200U.CEIP /Ml Syrup","Limitless Fortalase 300U.CEIP /Ml Syrup" ]
+sore_medications_concentration=['200U.CEIP',' 200U.CEIP','200U.CEIP',"300U.CEIP"]
+
+
+anti_emetic_Drugs1=['Danset Amp ' , 'Zofran Amp ',"Zofatron Amp " ,"Emerest Amp" , "Ondametic Amp " , "Vomifraton Amp " ,"Danasetron Amp"  ,"Ondalenz 4 mg ODF" , "Ondalenz 8 mg ODF"]
+anti_emetic_Drugs1_conc=[" 4 Mg / 2 Ml , 8 MG/ 4 Ml" , " 4 Mg / 2 Ml , 8 MG/ 4 Ml" , " 4 Mg / 2 Ml , 8 MG/ 4 Ml " , " 4 Mg / 2 Ml "," 4 Mg / 2 Ml " , " 8 MG/ 4 Ml" , " 4 Mg / 2 Ml "," 4 mg" , "8 mg"] 
+
+anti_emetic_Drugs2=["Motinorm 5 Mg / 5 Ml Susp" , "Farcotilium 5 Mg / 5 Ml Susp" , "Gastromotil 5 Mg / 5 Ml Susp","Dompidone 100Mg/100Ml Oral Susp. 100Ml",
+"Motilium 1Mg/Ml Susp. 100Ml"]
+anti_emetic_Drugs2_concentration=["5 Mg / 5 Ml", "5 Mg / 5 Ml", "5 Mg / 5 Ml","5 Mg / 5 Ml ","5 Mg / 5 Ml "]
+
+
+
+
+fexofenadine_drugs = ['Telfast 30 mg / 5 ml Syrup' ,"Fastel 30 mg / 5 ml Susp", "Alertam 30Mg/5Ml Oral Susp. 100Ml","Fexon 30Mg/5 Ml Oral Susp. 100 Ml","Fexodine 30Mg/5Ml Oral Susp. 100 Ml"]
+fexofenadine_drugs_conc = ["30 mg / 5 ml ","30 mg / 5 ml ","30 mg / 5 ml ","30 mg / 5 ml ","30 mg / 5 ml "]
+
+levocetirizine_syrup_medications=["Levcet 2.5 MG/5 ML Syrup" ,"Levohistam 2.5 MG/5 ML Syrup" , "Allear 2.5 MG/5 ML Syrup","Levoctivan 2.5 MG/5 ML Syrup","Xaltec 2.5 MG/5 ML Syrup" , "Lergi 2.5 MG/5 ML Care Syrup","Turnalev 2.5Mg/5Ml Syrup 120 Ml",
+ "Mervoza 2.5Mg/5Ml Syrup 120 Ml","Orgitrizine 2.5Mg/5Ml Syrup 120 Ml","Linahayzin 2.5Mg/5 Ml Syrup 120 Ml","Allergstop 2.5Mg/5Ml Syp. 100 Ml"]
+ 
+levocetirizine_syrup_medications_conc=["2.5 MG/5 ML" ,"2.5 MG/5 ML","2.5 MG/5 ML","2.5 MG/5 ML","2.5 MG/5 ML","2.5 MG/5 ML","2.5 MG/5 ML" ,"2.5 MG/5 ML","2.5 MG/5 ML","2.5 MG/5 ML","2.5 MG/5 ML"]
+
+levocetirizine_drops_medications=["Levcet 5 MG /ml Oral Drops", "Levohistam 5Mg/Ml Oral Drops 10 Ml"]
+levocetirizine_drops_medications_conc=["5 MG /ml","5 MG /ml"]
+
+cetirizine_syrup_medications=["Zyrtec 1 MG/ ML Syrup"  , "Histazine 1 MG/ ML Syrup" , "Alerid 1 MG/ ML Syrup ", "Epirizine 5Mg/Ml Syrup 60 Ml","Cetritin 5Mg/5Ml Syrup 120Ml","Cetrak 1Mg/Ml Syrup 120Ml","Tomazine 1Mg/Ml 60Ml Syrup","Alerid 5Mg/5Ml Syrup 120Ml","Lergfree 5Mg/5Ml Syrup 120Ml","Badotirizin 5Mg/5Ml Syrup 125Ml"]
+cetirizine_syrup_medications_conc=["1 MG/ ML" , "1 MG/ ML","1 MG/ ML", "1 MG/ ML","1 MG/ ML","1 MG/ ML","1 MG/ ML","1 MG/ ML","1 MG/ ML","1 MG/ ML"]
+
+cetirizine_drops_medications=["Histazine 10 Mg /ml Oral Drops","Zyrtec 10 Mg /ml Oral Drops", "Cetirizine 1% Oral Drops. 15 Ml","Alerid 10Mg/Ml Oral Drops. 10 Ml"] 
+cetirizine_drops_medications_conc=["10 MG / ml","10 Mg /ml","10 MG / ml","10 Mg /ml"]
+
+
+evastin_medications_drugs=["Evastine 5Mg/5Ml Syrup 100Ml","Astin 5Mg/5Ml Syrup 100 Ml","Ebastine-Borg 0.1% Syrup 60 Ml","Ebastel 100 Ml Syrup"]
+evastin_medications_drugs_conc=["5","5","5","5"]
+
+
+desa_medications_drugs=["Delarex 0.05G/100Ml Syrup 60 Ml","Hygi - Tadine 120 Ml Syrup","Fernilar 0.5Mg/Ml Syrup 60 Ml"
+,"Brevy ( 2.5 Mg / 5 Ml )100 Ml Syrup","Delora - Stop 90 Ml Syrup","Skivalorine 2.5 Mg / 5 Ml Syrup",
+"Embanodex ( 0.5Mg/Ml )  Syrup 100 Ml","Deslorat  100 Ml Syrup","Lorafast Syrup 100 Ml","Deslorex  120  Syrup",
+"Deslorastamine Syrup120Ml ","Desa  2.5 Mg / 5 Ml 100 Ml Syrup","Gertadino  120 Ml Syrup"]
+
+desa_medications_drugs_conc=["2.5 MG / 5 ML","2.5 MG / 5 ML","2.5 MG / 5 ML",
+"2.5 MG / 5 ML","2.5 MG / 5 ML","2.5 MG / 5 ML",
+"2.5 MG / 5 ML","2.5 MG / 5 ML","2.5 MG / 5 ML",
+"2.5 MG / 5 ML","2.5 MG / 5 ML","2.5 MG / 5 ML","2.5 MG / 5 ML"]
+
+ketotifen_medications_drugs=["Allerban 1Mg/5Ml Syrup 100 Ml","Ketoti Pharco 1Mg/5Ml Syrup 120Ml","Prophallerge 1Mg/5Ml Syrup 120Ml","Zaditen 1Mg/5Ml Syrup 100Ml","Zylofen 20Mg/100Ml Syp.","Alergoliber 1Mg/Ml Syrup 120 Ml"]
+ketotifen_medications_drugs_conc=["1","1","1","1","1","1"]
+
+anti_histaminic2=["Fenistil 1MG / ml Drops"]
+anti_histaminic2_conc=[".05 mg / drop"]
+
+anti_diarrhea_Drugs = ["Nanzoxid 100 mg /5 ml Susp","Nitazode 100 mg /5 ml Susp" , "Nit Clean 100 mg /5 ml Susp","Egygastreaz 100 mg /5 ml Susp","Antidiazox 100 mg /5 ml Susp","Cryptoper 100 mg /5 ml Susp",
+"Zolifutal 100 mg /5 ml Susp","Antizole 100 mg /5 ml Susp","Trustnal100 Ml/ 5 Ml Susp"]
+anti_diarrhea_Drugs_concentration=["100 mg /5 ml" ,"100 mg /5 ml","100 mg /5 ml", "100 mg /5 ml","100 mg /5 ml","100 mg /5 ml","100 mg /5 ml","100 mg /5 ml","100 mg / 5 ml"]
+
+antinal_similars_medications=["Antinal 220 mg / 5 mL Susp","Nifuroxazide 220Mg/5Ml 60Ml Susp.","Nitrofurinal 220Mg/5Ml 60Ml Susp.","Nifunal 4% 60Ml Susp.","Panax Diarrex 200Mg/5Ml Oral Susp. 60 Ml","Diax 220Mg/5Ml 60Ml Susp.",
+"Dia-Furyl 220Mg/5Ml Oral Susp. 60 Ml","Nifurox 200Mg/5Ml Susp. 100Ml","Furfuril 220Mg/5Ml Oral 60Ml Susp.","Flatrolam 220Mg/5Ml Susp. 100Ml","Nifunazide 220Mg/5Ml Susp. 60 Ml",
+"Intest-Relief 220Mg/5Ml Susp.","Diaxnol 220Mg/5Ml 60Ml Susp.","Furfuril 220Mg/5Ml Oral Susp. 90 Ml"]
+antinal_similars_medications_conc=["220 mg / 5 mL","220 mg / 5 mL","220 mg / 5 mL","220 mg / 5 mL","220 mg / 5 mL","220 mg / 5 mL","220 mg / 5 mL","220 mg / 5 mL","220 mg / 5 mL","220 mg / 5 mL","220 mg / 5 mL","220 mg / 5 mL","220 mg / 5 mL","220 mg / 5 mL"] 
+
+
+
+
+albendazole_medication_drugs=["Albendazole 200Mg/5Ml Susp. ","Alzental 20Mg/Ml Susp.","Bendax 100Mg/5Ml Susp. ","Vermizole 200Mg/5Ml Susp. "]
+albendazole_medication_drugs_conc=["200","100","100","200"]
+
+
+mebendazole_medication_drugs=[ "Vermin 100Mg/5Ml Susp. ","Antiver 100Mg/5Ml Susp. "]
+mebendazole_medication_drugs_conce=["100","100"]
+
+flubendazole_medication_drugs=[ "Fluver 20Mg/Ml Susp. ","Fluvermal 20Mg/Ml Susp. ","Flub 100 Mg / 5 Ml Susp 30 Ml"]
+flubendazole_medication_drugs_conc=["100","100","100"]
+
+
+laxatives_drugs=["Duphalac 667 Mg / 1 Ml Syrup","Lactulose 667 Mg / 1 Ml Syrup " , "Sedalac 667 Mg / 1 Ml Syrup" , "Laxolac 667 Mg / 1 Ml Syrup"]
+laxatives_drugs_conc=["667 Mg / 1 Ml","667 Mg / 1 Ml","667 Mg / 1 Ml","667 Mg / 1 Ml"]
+
+laxatives_drugs2=["Picolax 7.5 mg / 1 Ml Oral Drops", "Normalax 0.75% Oral Drops 15 Ml","Laxeol-Pi 7.5Mg/Ml Oral Drops 15Ml","Bowelocare 0.75% Oral Drops 15 Ml"]
+
+laxatives_drugs2_conc=["7.5 mg / 1 Ml","7.5 mg / 1 Ml","7.5 mg / 1 Ml","7.5 mg / 1 Ml"]
+
+laxatives_drugs3=["Egycusate 20 Mg /5 Ml Syrup 100 Ml" , "Optilax 120 Ml Syrup"]
+
+
+abdominal_pain_drugs=["Viseralgine 10 Mg / 5 Ml Syrup " , "Viscera 10 Mg / 5 Ml Syrup" , "Spasmo Free 10 Mg / 5 Ml Syrup " , "Timogen 10 Mg / 5 Ml Syrup " ]
+abdominal_pain_concentration=["10","10","10","10" ]
+
+abdominal_pain_drugs2=["Gast Reg 24 Mg / 5 Ml Oral Susp" , "Tritone 24 Mg / 5 Ml Oral Susp"]
+abdominal_pain_drugs2_concentration=["24 Mg / 5 Ml","24 Mg / 5 Ml"]
+
+vitamin_D_drugs=["Vidrop Oral Drops","Ossoferol Drops Vitamin D3( 2800 Iu/Ml ) 30 Ml","Nel(  2800Iu/Ml ) D3  Drops  30 Ml","Choletrix -D3 400 Iu Drop 30Ml ", "Hexa Vitamin D 3 Drops 15 Ml","Diviton - D 200 I.U Drops ","D3  2400 Iu/Ml Oral Drops 30 Ml ","Modern D Kids( Vit D3 400Iu/Drop) Drops 15 Ml","Hoffidal Oral Drops 15 Ml",
+ "Sanso D 3 Drops 60 Ml","Oridal (2800 I.U/Ml) Oral Drops 30 Ml","Oneferol Bone Oral Vit D3 Drop 30 Ml"]
+vitamin_D_drugs_concentration=["100","100","100","400","400","200","100","400","400","40","100","100"]
+
+vitamin_D_drugs2=["Three Drops 400 (D3 400 Iu) 30 Ml","Three Drops 600 (D3 600 Iu) 30 Ml","Vitree Vitamin D3 Drops 30 Ml","Actikid Vitamin  D3 10 Mg Per .5 Ml  Drops 30 Ml","Maddovit D3 Drops Orange Flavour 30 Ml "]
+vitamin_D_drugs2_conc=["400 / 0.5","600 / 0.5","400 /0.5 ","400 / 0.5","200 /0.5 "]
+conc_d3_drops=["400","600","400","400","200"]
+
+
+
+anti_gases_drugs=["Calminal Syrup","Simethicone 2%  Oral Drops.","Baby Rest 40Mg/0.6Ml Oral Drops","Sanso Baby Water Syrup"]
+
+anti_gases_drugs2=["Dentinox 2.65% Infant Colic Drops"
+,"Gripe Water (Bambino) 120 Ml"
+,"Gripe Water Smile 120 Ml"]
+
+anti_gases_drugs3=["Carminex Syrup 120 Ml ","Nonoo Water Syrup 120 Ml ","Simethicone Emulsion 120 Ml"
+,"Simedill 120 Ml Syrup","Aqua - Cid Syrup 120 Ml ","Aqua Plus 100 Ml Syrup"]
+
+anti_diarrhea_Drugs2=["Hidrasec 10 mg Sachets" , "Hidrasec 30 mg Sachets"]
+anti_diarrhea_Drugs2_concentration=["10", "30"]
+
+
+
+
+
+cough_drugs=["Tussistop 30Mg/5Ml Syrup 100 Ml","Omegacough 30Mg/5Ml Syrup 120 Ml","Globaprop 30Mg/5Ml Syrup 120 Ml","Mucotec 175Mg/5Ml Pd. For Oral Susp. 100 Ml","Cabella  21.3Mg/10Ml Syrup 125Ml"]
+cough_drugs_conc=["30","30","30","175","21.3"]
+
+#cough_drugs_concentration=["125 mg / 5 ml" ,  " 125 mg + 100mg + 2mg / 5 ml", "35 MG / 5 ML","Pipazethate 40 mg /ml","Pipazethate 10 mg / ml","Bromhexine HCL 4 mg + Acephyline Piperazine 100 mg ","Levodroppropizine","Cloperastine Hcl 20 Mg/ 5ml",
+#"Bromhexine HCL,Terbutalinesulphate, Guaifenesin ,Menthol "]
+
+common_cold_drugs=["1,2,3 (One Two Three) Syrup 120 Ml","Babyrhino Syrup 100Ml","Fever N Flu 120Ml Syrup","Flumol Syrup 120Ml","Neo-Michaelon Susp. 120Ml",
+"Noflu Syrup 100Ml","Rhinocalm Syrup 120Ml","Vegaskine Syrup 120Ml","Rhinomol-S Syrup 120Ml"]
+
+common_cold_drugs2=["Dolo-D Oral Susp. 115 Ml","Brufen Flu Susp. 60 Ml","Powcold Susp. 100 Ml"]
+common_cold_drugs3=["Dolo-D Plus Oral Susp. 115 Ml","Congestal Syrup 120Ml","Rhinopro Syrup 90Ml","Rhinotus Syrup 90Ml","Westoflow Oral Susp. 120 Ml"]
+
+common_cold_drugs4=["Sine-Up Syrup 120 Ml" , "Actifed 125 Mg Syrup" , "Andogonium Syrup 100 Ml"]
+
+common_cold_colletion=(common_cold_drugs+common_cold_drugs2+common_cold_drugs3+common_cold_drugs4)
+
+budesonide_medications_drugs=["Budexan 1 Mg / 2 Ml  Amp","Pulmicort 0.5Mg/Ml  2Ml Amp","Pulmicort 0.25Mg/Ml  2Ml  Amp","Budexan 0.5 Mg / 2Ml  Amp"]
+budesonide_medications_drugs_conc=["1","0.5","0.25","0.5"]
+
+ipratropium_medications_drugs=["Ipratropium .25 Mg / 1 Ml  Amp","Ipratropium  0.5 Mg / 2Ml Amp","Atrovent 250 Mcg /  2 Ml  Amp","Atrovent 500 Mcg  / 2 Ml Amp","Asmatropim 500  Mcg / 2 Ml Amp"]
+ipratropium_medications_drugs_conc=["0.25" , "0.5","0.25","0.5","0.5"]
+
+farcolin_medications_drugs=["Farcoline Inhaler 5 Mg / Ml Sol","Asthmarelief 2.5 Mg/ 2.5 Ml Inhalation Amp","Asthmarelief 5 Mg / 2.5 Ml Inhalation Amp"]
+farcolin_medications_drugs_conc=["5","2.5","5"]
+
+ivy_medications_drugs=["Sinuc 0.9% Syrup ","Sanso Bronchi Syrup ","Rotahelex Syrup ","Peopospan 0.7Gm/100Ml ",
+"Kifpan Syrup ","Kafinol Syrup ","Ivyrospan Syrup ","Ivypront 0.84Gm Syrup ","Ivy Bronch Syrup ","Hi Pan Syrup ","Monohexal Syrup 120 Ml",
+"Advohelix Syrup 120 Ml","Spanomep Syrup 120 Ml","Pro Efu Cough Syrup 120 Ml","Biorelixit Syrup 120 Ml","Rotahelex 30 Ml Drops"
+,"Ivycan  Syrup  120 Ml"
+,"Ivycare  Syrup 120 Ml"
+,"Ivyntol Syrup 120 Ml"
+]
+
+
+
+ambroxol_medications_drus=["Ambroxol 15 Mg/5Ml Syp. 120 Ml","Bronchopro 15Mg/5Ml Syrup 100Ml",
+"Muco 15Mg/5Ml Syrup 100Ml","Mucofar 15Mg/5Ml Syrup 120Ml","Mucopect  Syrup 120  Ml","Pulmosolvan  15 Mg / 5 Ml 100 Ml"]
+ambroxol_medications_drus_conc=["15","15","15","15","15","15"]
+
+bisolvon_medications_drus=["Bromhexine 4Mg/5Ml Syrup 120Ml","Bisolvon 4Mg/5Ml Syrup 115 Ml","Solvolytic 8Mg/5Ml Syrup 115Ml"]
+bisolvon_medications_drus_conc=["4","4","8"]
+
+ambroxol_drops_medications_drugs=["Ambroxol 7.5Mg/Ml Oral Drops 15 Ml","Bronchopro 7.5Mg/Ml Oral Drops 30 Ml"]
+ambroxol_drops_medications_drugs_conc=["7.5","7.5"]
+
+cough_month_year_medications_durgs=["Epicophylline Syrup 125 Ml","Avipect Syrup 100 Ml"]
+
+
+bisolvon_drops_medications_drugs=["Bisolvon 10Mg/5Ml Oral Or Inh. Drops. 40 Ml","Solvin 2 Mg/Ml Oral Drops 15 Ml"]
+bisolvon_drops_medications_drugs_conc=["2","2"]
+
+
+aironyl_medications_drugs=["Aironyl 1.5 Mg / 5 Ml Syrup"]
+aironyl_medications_drugs_conc=["1.5"]
+
+
+allvent_medication_drug=["Four Vent Syrup 125Ml","All-Vent Syrup 125Ml","Terhexine 120 Ml Syrup"]
+
+allvent_medication_drug2=["Ventocough Syrup 125 Ml","Ventocough Sugar Free Syrup 125Ml"]
+
+allvent_medication_drug3=["Tri - Broxol Syrup 100Ml","Farcosolvin Syrup 120Ml"]
+allvent_medication_drug4=["Oplex  ( N ) Syrup 125 Ml ","Cough Rest - N 120 Ml Syrup"]
+allvent_medication_drug5=["Isilin Syrup 120 Ml","Benalex Syrup 120 Ml"]
+allvent_medication_drug6=["Broleaves Syrup 120 Ml"]
+
+cough_collection_2=(allvent_medication_drug+allvent_medication_drug2+allvent_medication_drug3+allvent_medication_drug4+allvent_medication_drug5+allvent_medication_drug6)
+
+ventolin_expect_medications_drugs=["Bronchovent Syrup 125Ml","Octovent Plus Syrup 100Ml","Ventolin Expectorant Syrup 125Ml"]
+
+
+ventolin_medications_drugs=["Bronchoterol Syrup 120 Ml","Mepacovent 2Mg/5Ml Syrup 125Ml","Salbovent 2Mg/5Ml Syrup 120Ml","Ventolin 2Mg/5Ml Syrup 125Ml"]
+
+cough_6years_medications_drugs1=["Bronchophane Syrup 125 Ml","Tusskan Syrup 100 Ml"]
+cough_6years_medications_drugs2=["Bronchotec Syrup 120Ml","Vicksolytic Syrup 120Ml"]
+cough_6years_medications_drugs3=["Codilar Syrup 120 Ml","Tussivan-N Syrup 125Ml"]
+cough_6years_medications_drugs4=["Cyrinol Syrup 60Ml","Respipect Syrup 120 Ml"] 
+
+cough_2_6_mediactions_drugs=["Flucalm 120 Ml Oral Solution"
+,"Fast Syrup 120 Ml"
+,"Coldal Syrup 120 Ml "
+,"Farcolin Syrup 120 Ml"
+,"Epicophylline Pheno Syrup"
+,"Caventol Syrup 120 Ml"
+,"Osipect Syrup 120 Ml"
+,"Alveolin - P Syrup 100Ml"
+,"Alveolin Syrup 100 Ml"
+,"Babeton Syrup 120 Ml "
+,"Babeton Syrup Sugar Free"
+,"Balsam For Children 120 Ml Syrup "
+,"Cough Pent 120 Ml Syrup"
+,"Cough Cut Syrup 100 Ml ",
+"Cortopect 250Mg/5Ml 120 Ml Syrup",
+"Broncare 120 Ml",
+"Codiphan Syrup 120 Ml # G.2 #"
+
+
+]
+
+bronchicum_medications_drugs=["Broncandes Syrup 100 Ml Caramel Falvour","Bronchicum Elixir 100 Ml","Nexibronch With Honeysyrup 200 Ml","Nexibronch Syrup 200 Ml"]
+
+mucosol_medications_drugs=["Mucosol Ped. 125Mg/5Ml Syrup 120Ml","Carbolase 2Gm/100Ml Syrup 100Ml"]
+
+probric_medications_drugs=["Probric 5Mg/5Ml Syrup 125Ml","Bambedil 1Mg/Ml Syrup 120Ml"]
+
+other_cough_medications_drugs=["Ultrasolv Syrup 120Ml","Loprecough Syrup 100 Ml","Codaphen-N Syrup 120Ml","Notussil 4Mg/Ml Susp. 60Ml","Mucophylline Syrup 125Ml","Solvimyst 100Mg/5Ml Syrup 120Ml"]
+
+
+other_cough_medications_drugs2=["Solvex 250Mg/5Ml Syrup 120Ml","Sedaline Syrup 125 Ml","Respipect Syrup 120 Ml"
+,"Pulmonal ( N ) Syrup 120 Ml","Pectipro 0.3% Syrup 90Ml","Tussipect - N - Syrup 100 Ml "
+,"Tussinor Syrup 120 Ml","Thymotal Plus Syrup 100 Ml","Thymotal Syrup 100 Ml",
+"Penta Mix Syrup","Pentacold 120 Ml Syrup"
+
+,"Sina Dry Honey 120 Syrup"
+,"Sina Wet 120 Syrup "
+]
+
+
+
+zinc_medications_drugs=["Zinc Origin 10 Mg/ 5 Ml 120 Ml Syrup","Zinco Rhea 20 Mg/5Ml Syrup 80Ml "
+,"Sulfozinc 10 Mg/5Ml Pd. For Syrup 80Ml","Sulfozinc 20 Mg/5Ml Syrup 80Ml","Salfoverose 20 Mg/5Ml Syrup 120Ml"]
+
+zinc_medications_drugs_conc=["10","20","10","20","20"]
+
+amoxicllin_medications_drugs=["Amoxil Forte 250 Mg Susp100 Ml","Biomox 250Mg/5Ml Susp 80 Ml","E Mox 125 Mg /5 Ml Susp 60 M","E-Mox 250Mg/5Mlsusp60Ml","Ibiamox 400 Mg/5Ml Susp80Ml"]
+amoxicllin_medications_drugs_conc=["250","250","125","250","400"]
+
+
+acyclovir_medications_drugs=["Zovirax D.S 400 Mg/5 Ml 100 Ml Suspension","Virustat Oral Susp 120 Ml","Borgavirax 200 Mg 125 Ml Syrup"]
+acyclovir_medications_drugs_conc=["400","200","200"]
+
+
+other_antibiotics_medications_drugs=["Thirgecef 50 Mg / 5 Ml  60 Ml Susp","Aiadoxime 100 Mg / 5 Ml Suspension 60Ml"]
+other_antibiotics_medications_drugs_conc=["50","100"]
+
+no_doses_antibiotics_drugs=["Averozolid 100Mg/5Ml Susp. 60 Ml","Oxazolid 100 Mg Susp","Cidocetine 125 Mg Susp 60 Ml "]
+no_doses_antibiotics_drugs_conc=["100","100","125"]
+
+
+prednisolone_medications_drugs=["Pedicort 5Mg/5Ml Syp. 100 Ml"
+,"Predsol 5Mg/5Ml Syrup 50Ml","Xilone 5Mg/5Ml Syrup 100Ml","Unipridol 5Mg/5Ml Syp. 100 Ml"
+,"Pedicort Forte 15Mg/5Ml Syp. 100 Ml","Predsol Forte 15Mg/5Ml Syrup 60Ml"
+,"Xilone Forte 15Mg/5Ml Syrup 100Ml"
+,"Unipridol Forte 15Mg/5Ml Syp. 100 Ml",
+"Orazone   Syrup  120 Ml","Deltasone Syrup 120 Ml"
+]
+prednisolone_medications_drugs_conc=["5","5","5","5","15","15","15","15","0.1","0.05"]
+
+
+other_git_medications=["Diomacte 1000Mg/5Ml Susp. 90 Ml","Kapect Susp. 120 Ml","Streptoquin Susp 60 Ml"]
+
+anti_diarrhea_Drugs3=["Diasmect Oral Susp","Dia Stop Susp 60 Ml"]
+
+
+apidone_medications_drugs=["Apidone Syrup 125Ml","Dexaphen Syrup 120Ml","Phenadone Syrup 100 Ml","Vendexine Syrup 125Ml"]
+
+
+claritine_medications_drugs=["Claritine 5 Mg / 5 Ml Syrup 100 Ml ","Mosedin  5 Mg / 5 Ml  Syrup 60 Ml"]
+claritine_medications_drugs_conc=["5","5"]
+
+anallerg_medications_drugs=["Allergyl 2Mg/5Ml Syrup 120Ml","Anallerge 2Mg/5Ml Syrup 100Ml"]
+anallerg_medications_drugs_conc=["2","2"]
+
+
+year_collection1=(claritine_medications_drugs+anallerg_medications_drugs)
+
+
+
+antacid_medications_drugs=["Mucogel Susp 180 Ml ","Maalox Plus Susp 180 Ml","Miopan ( Plus ) Susp 100 Ml ","Acidipan Oral Susp 180 Ml","Alumatrend 240 Ml Syrup ","Debeskon Suspension 120 Ml ","Gaviscon Advance  Syrup 150 Ml",
+"Epico Gel Susp 180 Ml"]
+
+
+digestive_git_medications=["Avandorix Syrup 120Ml","Digenorm 120 Ml Syrup"]
+
+vitamins_minerals_drugs_year=["Foliddox 400Mcg/5Ml Raspberry  Solution","Limitless Kids Multivitamin 140 Ml Syrup","Sansovit Iron Syrup 200 Ml"
+,"Elbavit Syrup Iron 60 Ml","Elbavit Syrup Multi Vitamin Calcium","Fruital 120 Ml Syrup "
+,"Feroglobin  Syrup 120 Ml","Alvital Calcium 120 Ml Syrup","Alvital - Iron 120Ml Syrup","Blue Iron 250 Ml ",
+
+"Egy Pedical Plus Syrup 100 Ml","Maxical-D 300 Mg 120Ml Susp"
+,"Osteocare Syrup 120 Ml ","Calddox 200 Ml Orange Mint Flavour"
+,"Marnys Ferrobine Complex Liquid 125 Ml"
+,"Marnys Osteohelp Complex Liquid Orange Flav"
+,"Pedical Syrup"
+,"Marnys Protect Syrup 125 Ml"
+,"Maddovit Junior 200Ml Orang Flav" , "Sansovit Calcium Syrup 100Ml" 
+
+,"Mr . Bear Fruta Juice Mango Syrup","Mr . Bear Fruta Lemon + Honey Syrup"
+,"Mr . Bear Mango   Syrup","Mr . Bear Plus Multi+Iron-Chocolate Syrup"
+,"Mr Bear Plus Multi Vit Iron Syrup","Mr Bear Plus Orange Syrup" , 
+"Sansoimune Syrup"
+,"Sansoimune Plus Suger Free Syrup"
+,"Immulant N 120 Mg Syrup"
+]
+
+vitamins_minerals_drugs_month=["Epicozym Syrup 125 Ml"
+,"Enrich N 100 Mg Syrup"
+,"Enrich Oral Drops 30 Ml"
+,"Decal- B12 (N) Syrup 120 Ml"
+,"Caldin Zinc Susp 120 Ml "
+,"Cal - Mag Forte Syrup 120 Ml",
+"C - Vit Drops 100 Mg /20 Drop 15 Ml"
+
+]
+
+
+omeag3_medications_years=["Omega Ddox 200 Ml Syrup "
+,"Omega Lox 200 Ml Syrup"
+,"Omecod 100 Ml Syrup "
+,"Omega ( 3 ) 100 Ml Syrup "
+,"Omega Seas Syrup  120 Ml "
+,"Map Omega Syrup 120 Ml"
+,"Efalex Liquid(Lemon Flavour)  120 Ml"
+,"Marnys Omega 3 Lemon  Syrup 125 Ml"
+,"Silver Seas Syrup 120 Ml"
+,"High Seas Syrup 120 Ml"
+,"Ultra Seas Syrup 120 Ml"]
+
+
+ors_drug1 = ["Pedialyte Syrup200 Ml","Flexolyte Classic 240 Ml ","Flexolyte Orange 240 Ml ","Flexolyte Strawberry 240 Ml"]
+
+ors_drug2 = ["Alexolyte ( +3Y ) Strawberr 360 Ml ","Alexolyte (+3Y) Orange 360 Ml ","Alexolyte (+3Y) Banana  360 Ml ","Alexolyte (+3Y) Pinnable  360 Ml "]
+
+ors_drug3 = ["Hydro-Safe Salts 10 Sachets","Ors  10 Sachets","Lohydran  10  Packets ","Rehydro - Zinc - 10 Sachets"]
+ors_collection = (ors_drug1+ors_drug2+ors_drug3)
+
+expensive_medications=["Foliddox 400Mcg/5Ml Raspberry  Solution",
+]
+
+no_dose_medications_drugs=["Uripan 100 Mg Syrup 120 Ml","Valponex 200 Mg Syrup 120 Ml ","Vedge 250 mg / 5 ml 100 Ml Syrup"
+,"Sycocetam 100Mg/1Ml Oral Sol 120Ml","Talantoline 100 mg / ml  Oral Solution 30 Ml","Taminil N 12 gm / ml  Susp 60 Ml ","Tanacea Syrup","Tanakan 40 Mg Syrup 30 Ml ","Tegretol 100 Mg / 5 Ml Syrup 100 Ml","Oxaleptal Susp 100 Ml ","Potassium - M -Syrup 120 Ml ","Ramdeep 120 Ml Syrup"
+,"Reminyl 4 Mg 100Ml Syrup","Rifactine Syrup 60 Ml 100Ml/5Ml","Rispadex 100 Ml Oral Solution","Risperdal1 Mg / Ml 30 Ml Solution","Salinum Mouth Dryness 300 Ml Syrup","Sandimmun Neoral Syrup","Seizurless 100 Mg / 1 Ml Oral Solution 120 Ml","Shancita 100 Mg / 30 Ml Oral Solution"
+,"Sominaletta Syrup 120 Ml ","Speak Smooth Syrup","Speak + D Pure Oil 120 Ml","Speak + D Smooth 450 Ml","Stimulan Syrup 120 Ml",
+"Mucogel Susp 180 Ml ","Maalox Plus Susp 180 Ml","Miopan ( Plus ) Susp 100 Ml ","Acidipan Oral Susp 180 Ml""Alumatrend 240 Ml Syrup ","Debeskon Suspension 120 Ml ",
+"Gaviscon Advance  Syrup 150 Ml","Epico Gel Susp 180 Ml"]
+
+
+
+months_and_years_drops_supp=["Hydroferrin Oral Drops"
+,"Otrivine Baby Saline Drops"
+,"Nystatin 100,000I.U/1Ml Oral Drops"
+,"Mini  Guava  N  Drops"
+,"Selgon 40 Mg / Ml  Drops"
+,"Selgon Inf 10 Mg Supp"
+,"Glycerin ( Inf ) Supp"
+,"Glycerin ( Child )   Supp"
+,"Rectoplexil  Inf   Supp" 
+, "Coughsed Inf  Supp"
+]
+
+years_only_drops_supp=["Bisadyl Inf 5 Mg Supp"
+,"Coughsed Children  Supp"
+
+,"Rhinex  Inf 0.05 N . Drops "
+,"Balkis 0.05 ( Inf) Nasal Drops "
+,"Otrivine 0.05 Inf Nasal Drops"
+,"Oxymet Ped 0.025 Nasal  Drops"
+]
+
+nasal_otri = ["Rhinex  Inf 0.05 N . Drops ","Balkis 0.05 ( Inf) Nasal Drops ","Otrivine 0.05 Inf Nasal Drops","Oxymet Ped 0.025 Nasal  Drops"]
+
+
+
+collection1=(ventolin_expect_medications_drugs+ventolin_medications_drugs+cough_6years_medications_drugs1+cough_6years_medications_drugs2+
+cough_6years_medications_drugs3+cough_6years_medications_drugs4+bronchicum_medications_drugs+mucosol_medications_drugs+other_cough_medications_drugs+
+other_cough_medications_drugs2+probric_medications_drugs+cough_2_6_mediactions_drugs)
+
+weight_collection=(antibiotics_drugs1+antibiotics_drugs2+antibiotics_drugs3+antibiotics_drugs4+clarithromycin_antibiotic_medications+
+cefdinir_antibiotic_medications+cefalexin_antibiotic_medications+flumox_antibiotics_medications+metronidazole_medications_drugs+
+fever_medications+paracetamol_drops_medications2+paracetamol_supp_medications2+brufen_medications+diclofenac_medications+diclofenac_supp_medications+
+sore_medications+anti_emetic_Drugs1+anti_emetic_Drugs2+anti_histaminic2+anti_diarrhea_Drugs2+cough_drugs+amoxicllin_medications_drugs+
+duricef_antibiotics_drugs+velosef_antibiotics_drugs+acyclovir_medications_drugs+other_antibiotics_medications_drugs+prednisolone_medications_drugs+cefaclor_antibiotic_drugs+
+aironyl_medications_drugs+ampicillin_antibiotics_medications + laxatives_drugs + abdominal_pain_drugs)
+
+all_drugs=sorted(weight_collection+
+fexofenadine_drugs + 
+levocetirizine_syrup_medications+levocetirizine_drops_medications+cetirizine_syrup_medications+cetirizine_drops_medications+
+evastin_medications_drugs+desa_medications_drugs+ketotifen_medications_drugs+anti_diarrhea_Drugs + antinal_similars_medications+albendazole_medication_drugs+mebendazole_medication_drugs+
+flubendazole_medication_drugs+laxatives_drugs2+laxatives_drugs3+abdominal_pain_drugs+abdominal_pain_drugs2+vitamin_D_drugs+vitamin_D_drugs2+anti_gases_drugs+anti_diarrhea_Drugs3+
+
+
+
+common_cold_colletion+budesonide_medications_drugs+ipratropium_medications_drugs+farcolin_medications_drugs+ivy_medications_drugs+other_cough_medications_drugs+other_cough_medications_drugs2+ambroxol_medications_drus+bisolvon_medications_drus+
+ambroxol_drops_medications_drugs+bisolvon_drops_medications_drugs+allvent_medication_drug+allvent_medication_drug2+allvent_medication_drug3+allvent_medication_drug4+allvent_medication_drug5+allvent_medication_drug6+
+
+ventolin_expect_medications_drugs+ventolin_medications_drugs+cough_6years_medications_drugs1+cough_6years_medications_drugs2+cough_6years_medications_drugs3+
+cough_6years_medications_drugs4+bronchicum_medications_drugs+mucosol_medications_drugs+probric_medications_drugs+
+zinc_medications_drugs+no_doses_antibiotics_drugs+other_git_medications+apidone_medications_drugs+no_dose_medications_drugs+
+claritine_medications_drugs+anallerg_medications_drugs+anti_gases_drugs2+anti_gases_drugs3+cough_2_6_mediactions_drugs+
+cough_month_year_medications_durgs+vitamins_minerals_drugs_year+digestive_git_medications+vitamins_minerals_drugs_month+omeag3_medications_years+months_and_years_drops_supp+years_only_drops_supp  + ors_collection)
+#print(len(all_drugs))
+########################################################################################################################
+
+all_drugs2=(antibiotics_drugs2+antibiotics_drugs3+antibiotics_drugs4+clarithromycin_antibiotic_medications+cefdinir_antibiotic_medications+cefalexin_antibiotic_medications+flumox_antibiotics_medications+amoxicllin_medications_drugs+velosef_antibiotics_drugs+duricef_antibiotics_drugs+metronidazole_medications_drugs+fever_medications+brufen_medications+diclofenac_medications+diclofenac_supp_medications+paracetamol_drops_medications2+paracetamol_supp_medications2+sore_medications+anti_emetic_Drugs1+
+anti_emetic_Drugs2+fexofenadine_drugs+levocetirizine_syrup_medications+levocetirizine_drops_medications+cetirizine_syrup_medications+cetirizine_drops_medications+anti_histaminic2+anti_diarrhea_Drugs+antinal_similars_medications+albendazole_medication_drugs+mebendazole_medication_drugs+flubendazole_medication_drugs+laxatives_drugs+laxatives_drugs2+abdominal_pain_drugs+abdominal_pain_drugs2+vitamin_D_drugs+vitamin_D_drugs2+anti_diarrhea_Drugs2+budesonide_medications_drugs+ipratropium_medications_drugs+farcolin_medications_drugs+ambroxol_medications_drus+bisolvon_medications_drus
++ambroxol_drops_medications_drugs+bisolvon_drops_medications_drugs+cough_drugs+evastin_medications_drugs+desa_medications_drugs+ketotifen_medications_drugs+
+zinc_medications_drugs+acyclovir_medications_drugs+other_antibiotics_medications_drugs+no_doses_antibiotics_drugs+prednisolone_medications_drugs+cefaclor_antibiotic_drugs
++claritine_medications_drugs+anallerg_medications_drugs+aironyl_medications_drugs+ampicillin_antibiotics_medications)
+
+all_drugs_conc=(antibiotics_drugs2_concentrations + antibiotics_drugs3_concentration+antibiotics_drugs4_concentration+clarithromycin_antibiotic_medications_conc+cefdinir_antibiotic_medications_conc+cefalexin_antibiotic_medications_conc+flumox_antibiotics_medications_conc+amoxicllin_medications_drugs_conc+velosef_antibiotics_drugs_conc+duricef_antibiotics_drugs_conc+metronidazole_medications_drugs_conc+fever_medications_conc+
+brufen_medications_conc+diclofenac_medications_conc+diclofenac_supp_medications_conc+paracetamol_drops_medications2_conc+paracetamol_supp_conc+sore_medications_concentration+anti_emetic_Drugs1_conc+anti_emetic_Drugs2_concentration+fexofenadine_drugs_conc+levocetirizine_syrup_medications_conc+levocetirizine_drops_medications_conc+cetirizine_syrup_medications_conc+cetirizine_drops_medications_conc+
+anti_histaminic2_conc+anti_diarrhea_Drugs_concentration+antinal_similars_medications_conc+albendazole_medication_drugs_conc+mebendazole_medication_drugs_conce+flubendazole_medication_drugs_conc+laxatives_drugs_conc+laxatives_drugs2_conc+abdominal_pain_concentration+abdominal_pain_drugs2_concentration+vitamin_D_drugs_concentration+vitamin_D_drugs2_conc+
+anti_diarrhea_Drugs2_concentration+budesonide_medications_drugs_conc+ipratropium_medications_drugs_conc+farcolin_medications_drugs_conc+ambroxol_medications_drus_conc+bisolvon_medications_drus_conc
++ambroxol_drops_medications_drugs_conc+bisolvon_drops_medications_drugs_conc+cough_drugs_conc+evastin_medications_drugs_conc+desa_medications_drugs_conc+
+ketotifen_medications_drugs_conc+zinc_medications_drugs_conc+acyclovir_medications_drugs_conc+other_antibiotics_medications_drugs_conc+no_doses_antibiotics_drugs_conc+prednisolone_medications_drugs_conc+
+cefaclor_antibiotic_drugs_conc+claritine_medications_drugs_conc+anallerg_medications_drugs_conc+aironyl_medications_drugs_conc+ampicillin_antibiotics_medications_conc)
+
+
+root.mainloop()
