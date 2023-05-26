@@ -1,2 +1,2 @@
- ip_address = ['172.16.8.59'] 
- mac_address = ['2C-44-FD-35-95-8B']
+ ip_address_list = ['172.16.8.59'] 
+ mac_address_list = ['2C-44-FD-35-95-8B']
